@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{%block content%}
+<body>
+<div>
+  <h1>Jntuk Cgpa Calculator</h1>
+  <form action = "\" method = "POST">
+  {% csrf_token %} 
+  <label for="your_name">Your name: </label>
+  <input id="your_name" type="text" name="your_name" required placeholder="Enter your registration number ex:18FE1A05E6">
+  <input type="submit" value="OK">
+</form>
+{{error}}
+{%endblock%}
+
+</div>
+</body>
+</html>
