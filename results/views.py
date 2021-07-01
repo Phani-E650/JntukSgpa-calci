@@ -2,7 +2,7 @@ import os,time
 
 import urllib.parse as urlparse
 
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.conf import settings
 
@@ -40,66 +40,72 @@ def get_results(request):
 		time.sleep(1)
 		rows = driver.find_elements_by_xpath("/html/body/div/div/div/div/center/div[1]/table/tbody/tr")
 		cols = driver.find_elements_by_xpath("//*[@id='rs']/table/tbody/tr[6]/td")
+		if(len(rows)==0 and len(cols)==0):
+			context={
+			"error":"Enter Correct registration number"
+			}
+			return redirect('get_results')
+			#return render(request, 'wrongreg.html',context)
+		else:
+			l=[]
+			k=[]
+			p=[]
+			for i in rows:
+				l.append(i.text)
+			for i in cols:
+				k.append(i.text)
 
-		l=[]
-		k=[]
-		p=[]
-		for i in rows:
-			l.append(i.text)
-		for i in cols:
-			k.append(i.text)
+			v=len(l)
+			for i in range(1,v-1):
+				p.append(list(l[i].split(" "))[-2:])
+			#print(p)
 
-		v=len(l)
-		for i in range(1,v-1):
-			p.append(list(l[i].split(" "))[-2:])
-		#print(p)
+			def grade(q):
+				if(q=="COMPLETED"):
+					return 0
+				if(q=="O"):
+					return 10
+				elif(q=="S"):
+					return 9
+				elif(q=="A"):
+					return 8
+				elif(q=="B"):
+					return 7
+				elif(q=="C"):
+					return 6
+				elif(q=="D"):
+					return 5
+				elif(q=="F"):
+					return 0
 
-		def grade(q):
-			if(q=="COMPLETED"):
-				return 0
-			if(q=="O"):
-				return 10
-			elif(q=="S"):
-				return 9
-			elif(q=="A"):
-				return 8
-			elif(q=="B"):
-				return 7
-			elif(q=="C"):
-				return 6
-			elif(q=="D"):
-				return 5
-			elif(q=="F"):
-				return 0
+			def percentage(p):
+				a=0
+				for i in p:
+					a=a+grade(i[0])*int(i[1])
+				return a
+			def total(p):
+				a=0
+				f=0
+				for i in p:
+					if(i[0]=='F'):
+						f=f+1
+					else:
+						a=a+int(i[1])
+				return (a+3*f,f)
+			t=total(p)
+			cgpa = round(percentage(p)/t[0],2)
+			percentage = round(((percentage(p)/t[0])-0.7)*10,2)
+			driver.close()
 
-		def percentage(p):
-			a=0
-			for i in p:
-				a=a+grade(i[0])*int(i[1])
-			return a
-		def total(p):
-			a=0
-			f=0
-			for i in p:
-				if(i[0]=='F'):
-					f=f+1
-				else:
-					a=a+int(i[1])
-			return (a+3*f,f)
-		t=total(p)
-		cgpa = round(percentage(p)/t[0],2)
-		percentage = round(((percentage(p)/t[0])-0.7)*10,2)
-		driver.close()
-
-		context = {
-        "cgpa": cgpa,
-        "percentage":percentage,
-        "username":username,
-        "f":t[1],
-    	}
+			context = {
+	        "cgpa": cgpa,
+	        "percentage":percentage,
+	        "username":username,
+	        "f":t[1],
+	    	}
 
 
-		return render(request, 'results.html',context)
+			return render(request, 'results.html',context)
 	elif(request.method == 'POST'):
 		context={
 		"error":"Enter Correct registration number"
