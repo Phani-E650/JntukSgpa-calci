@@ -4,39 +4,37 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0 auto;
     padding: 6px;
+    text-align: center;
 }
-
-a {
-    color: #246099;
 }
-
-div {
-  text-align: center
-}
-
-h1 {
-    font-size: 48px;
-    margin-bottom: 12px;
-}
-
-input, button {
-    margin: 12px 0;
-    border: 2px solid #246099;
-}
-
 input {
     color: #4D4D4D;
     padding: 14px;
 }
 
-button {
-    color: #FFF;
-    cursor: pointer;
-    background-color: #246099;
-    padding: 12px;
-    font-size: 16px;
+a {
+    color: #246099;
 }
-
-small {
-    font-size: small;
+form {
+    display: inline-block;
+}
+.your_name{
+    background-color: lightgrey;
+    background-size: 2px;
+    margin: 10px;
+    padding: 14px;
+}
+.year,.sem{
+    width: 180px;
+    height: 40px;
+    background-color: lightgrey;
+    background-size: 2px;
+    margin: 10px;
+}
+.submit{
+    width: 60px;
+    height: 40px;
+    background-color: lightgrey;
+    background-size: 2px;
+    margin: 10px;
 }

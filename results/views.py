@@ -18,6 +18,17 @@ from time import sleep
 DRIVER = 'chromedriver'
 def get_results(request):
 	username = request.POST.get('your_name')
+	sem = request.POST.get('sem')
+	year = request.POST.get('year')
+	semlink=str(sem)+str(year)
+	link={
+	'11':"https://jntukresults.edu.in/view-results-56735976.html",
+	'12':"https://jntukresults.edu.in/view-results-56736023.html",
+	'21':"https://jntukresults.edu.in/view-results-56736074.html",
+	'22':"https://jntukresults.edu.in/view-results-56736111.html",
+	'31':"https://jntukresults.edu.in/view-results-56736132.html",
+	}
+
 	if request.method == 'POST' and len(username)==10:
 
 
@@ -30,7 +41,7 @@ def get_results(request):
 		chrome_options.add_argument('headless') #Set the parameters of the option
 		driver = webdriver.Chrome(chrome_options=chrome_options) # Open Google Chrome
 		#driver = webdriver.Chrome("chromedriver.exe", options=opt)
-		driver.get("https://jntukresults.edu.in/view-results-56736132.html")
+		driver.get(link[semlink])
 
 		sbox = driver.find_element_by_class_name("txt")
 		sbox.send_keys(username)
@@ -101,7 +112,7 @@ def get_results(request):
 	        "cgpa": cgpa,
 	        "percentage":percentage,
 	        "username":username,
-	        "f":t[1],
+	        "f":"you have"+ str(t[1]) +"backlogs",
 	    	}
 
 
