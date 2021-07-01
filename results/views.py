@@ -112,7 +112,7 @@ def get_results(request):
 	        "cgpa": cgpa,
 	        "percentage":percentage,
 	        "username":username,
-	        "f":"you have"+ str(t[1]) +"backlogs",
+	        "f":"you have"+ " "+str(t[1])+" " +"backlogs",
 	    	}
 
 
