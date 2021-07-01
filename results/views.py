@@ -5,6 +5,7 @@ import urllib.parse as urlparse
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.conf import settings
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 
@@ -42,7 +43,8 @@ def get_results(request):
 		#chrome_options.binary_location = GOOGLE_CHROME_PATH
 		chrome_options.add_argument('headless') #Set the parameters of the option
 		#driver = webdriver.Chrome(chrome_options=chrome_options) # Open Google Chrome
-		driver = webdriver.Chrome(chrome_options=chrome_options)
+		#driver = webdriver.Chrome(chrome_options=chrome_options)
+		driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=chrome_options)
 		driver.get(link[semlink])
 
 		sbox = driver.find_element_by_class_name("txt")
