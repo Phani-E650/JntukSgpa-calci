@@ -32,9 +32,9 @@ def get_results(request):
 	if request.method == 'POST' and len(username)==10:
 
 		#GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+		
 		#CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 		chrome_options=webdriver.ChromeOptions()
-		chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 		chrome_options.add_argument("disable-dev-shm-usage")
 		chrome_options.add_argument("disable-gpu")
 		chrome_options.add_argument("disable-features=NetworkService")
