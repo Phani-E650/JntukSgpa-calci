@@ -40,7 +40,7 @@ def get_results(request):
 		chrome_options.add_argument("no-sandbox")
 		chrome_options.add_argument('headless') #Set the parameters of the option
 		#driver = webdriver.Chrome(chrome_options=chrome_options) # Open Google Chrome
-		driver = webdriver.Chrome("./chromedriver", chrome_options=chrome_options)
+		driver = webdriver.Chrome("/chromedriver.exe", chrome_options=chrome_options)
 		driver.get(link[semlink])
 
 		sbox = driver.find_element_by_class_name("txt")
