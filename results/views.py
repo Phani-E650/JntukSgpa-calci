@@ -21,7 +21,7 @@ def get_results(request):
 	username = request.POST.get('your_name')
 	sem = request.POST.get('sem')
 	year = request.POST.get('year')
-	semlink=str(sem)+str(year)
+	semlink=str(year)+str(sem)
 	link={
 	'11':"https://jntukresults.edu.in/view-results-56735976.html",
 	'12':"https://jntukresults.edu.in/view-results-56736023.html",
