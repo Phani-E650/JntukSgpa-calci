@@ -22,6 +22,9 @@ def get_results(request):
 	sem = request.POST.get('sem')
 	year = request.POST.get('year')
 	semlink=str(year)+str(sem)
+	if(semlink=="32"):
+		username="999"
+
 	link={
 	'11':"https://jntukresults.edu.in/view-results-56735976.html",
 	'12':"https://jntukresults.edu.in/view-results-56736023.html",
@@ -57,7 +60,7 @@ def get_results(request):
 		cols = driver.find_elements_by_xpath("//*[@id='rs']/table/tbody/tr[6]/td")
 		if(len(rows)==0 and len(cols)==0):
 			context={
-			"error":"Enter Correct registration number"
+			"error":"Enter Correct registration number and year"
 			}
 			return redirect('get_results')
 			#return render(request, 'wrongreg.html',context)
