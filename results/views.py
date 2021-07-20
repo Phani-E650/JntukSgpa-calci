@@ -22,6 +22,7 @@ def get_results(request):
 	sem = request.POST.get('sem')
 	year = request.POST.get('year')
 	semlink=str(year)+str(sem)
+	typeres=request.POST.get('type')
 	if(semlink=="32"):
 		username="999"
 
@@ -32,6 +33,7 @@ def get_results(request):
 	'22':"https://jntukresults.edu.in/view-results-56736111.html",
 	'31':"https://jntukresults.edu.in/view-results-56736132.html",
 	}
+	l=["11","12","21","22","31"]
 
 	if request.method == 'POST' and len(username)==10:
 
@@ -48,79 +50,180 @@ def get_results(request):
 		#driver = webdriver.Chrome(chrome_options=chrome_options) # Open Google Chrome
 		#driver = webdriver.Chrome(chrome_options=chrome_options)
 		driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=chrome_options)
-		driver.get(link[semlink])
+		if(typeres=="cgpa"):
+			print("cgpa")
+			p1=0
+			cgpa=0
+			f1=0
+			for i in l:
+				driver.get(link[i])
+				sbox = driver.find_element_by_class_name("txt")
+				sbox.send_keys(username)
 
-		sbox = driver.find_element_by_class_name("txt")
-		sbox.send_keys(username)
+				submit = driver.find_element_by_class_name("ci")
+				submit.click()
+				time.sleep(1)
+				rows = driver.find_elements_by_xpath("/html/body/div/div/div/div/center/div[1]/table/tbody/tr")
+				cols = driver.find_elements_by_xpath("//*[@id='rs']/table/tbody/tr[6]/td")
+				if(len(rows)==0 and len(cols)==0):
+					context={
+					"error":"Enter Correct registration number and year"
+					}
+					return redirect('get_results')
+					#return render(request, 'wrongreg.html',context)
+				else:
+					l=[]
+					k=[]
+					p=[]
+					for i in rows:
+						l.append(i.text)
+					for i in cols:
+						k.append(i.text)
 
-		submit = driver.find_element_by_class_name("ci")
-		submit.click()
-		time.sleep(1)
-		rows = driver.find_elements_by_xpath("/html/body/div/div/div/div/center/div[1]/table/tbody/tr")
-		cols = driver.find_elements_by_xpath("//*[@id='rs']/table/tbody/tr[6]/td")
-		if(len(rows)==0 and len(cols)==0):
-			context={
-			"error":"Enter Correct registration number and year"
-			}
-			return redirect('get_results')
-			#return render(request, 'wrongreg.html',context)
-		else:
-			l=[]
-			k=[]
-			p=[]
-			for i in rows:
-				l.append(i.text)
-			for i in cols:
-				k.append(i.text)
+					v=len(l)
+					for i in range(1,v-1):
+						p.append(list(l[i].split(" "))[-2:])
+						#print(p)
 
-			v=len(l)
-			for i in range(1,v-1):
-				p.append(list(l[i].split(" "))[-2:])
-			#print(p)
+					def grade(q):
+						if(q=="COMPLETED"):
+							return 0
+						if(q=="O"):
+							return 10
+						elif(q=="S"):
+							return 9
+						elif(q=="A"):
+							return 8
+						elif(q=="B"):
+							return 7
+						elif(q=="C"):
+							return 6
+						elif(q=="D"):
+							return 5
+						elif(q=="F"):
+							return 0
 
-			def grade(q):
-				if(q=="COMPLETED"):
-					return 0
-				if(q=="O"):
-					return 10
-				elif(q=="S"):
-					return 9
-				elif(q=="A"):
-					return 8
-				elif(q=="B"):
-					return 7
-				elif(q=="C"):
-					return 6
-				elif(q=="D"):
-					return 5
-				elif(q=="F"):
-					return 0
-
-			def percentage(p):
-				a=0
-				for i in p:
-					a=a+grade(i[0])*int(i[1])
-				return a
-			def total(p):
-				a=0
-				f=0
-				for i in p:
-					if(i[0]=='F'):
-						f=f+1
-					else:
-						a=a+int(i[1])
-				return (a+3*f,f)
-			t=total(p)
-			cgpa = round(percentage(p)/t[0],2)
-			percentage = round(((percentage(p)/t[0])-0.7)*10,2)
-			driver.close()
-
+					def percentage(p):
+						a=0
+						for i in p:
+							a=a+grade(i[0])*int(i[1])
+						return a
+					def total(p):
+						a=0
+						f=0
+						for i in p:
+							if(i[0]=='F'):
+								f=f+1
+							else:
+								a=a+int(i[1])
+						return (a+3*f,f)
+					t=total(p)
+					sgpa = round(percentage(p)/t[0],2)
+					percentage = round(((percentage(p)/t[0])-0.7)*10,2)
+					p1=p1+percentage
+					cgpa=cgpa+sgpa
+					f1=f1+int(t[1])
+					print(cgpa)
+			p1=round(p1/5,2)
+			cgpa=round(cgpa/5,2)
+			print(cgpa)
 			context = {
-	        "cgpa": cgpa,
-	        "percentage":percentage,
-	        "username":username,
-	        "f":"you have"+ " "+str(t[1])+" " +"backlogs",
-	    	}
+		    "sgpa": cgpa,
+		    "percentage":p1,
+		    "username":username,
+		    "f":"you have"+ " "+str(f1)+" " +"backlogs",
+		    }
+			return render(request, 'results.html',context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		else:
+
+
+			driver.get(link[semlink])
+
+			sbox = driver.find_element_by_class_name("txt")
+			sbox.send_keys(username)
+
+			submit = driver.find_element_by_class_name("ci")
+			submit.click()
+			time.sleep(1)
+			rows = driver.find_elements_by_xpath("/html/body/div/div/div/div/center/div[1]/table/tbody/tr")
+			cols = driver.find_elements_by_xpath("//*[@id='rs']/table/tbody/tr[6]/td")
+			if(len(rows)==0 and len(cols)==0):
+				context={
+				"error":"Enter Correct registration number and year"
+				}
+				return redirect('get_results')
+				#return render(request, 'wrongreg.html',context)
+			else:
+				l=[]
+				k=[]
+				p=[]
+				for i in rows:
+					l.append(i.text)
+				for i in cols:
+					k.append(i.text)
+
+				v=len(l)
+				for i in range(1,v-1):
+					p.append(list(l[i].split(" "))[-2:])
+				#print(p)
+
+				def grade(q):
+					if(q=="COMPLETED"):
+						return 0
+					if(q=="O"):
+						return 10
+					elif(q=="S"):
+						return 9
+					elif(q=="A"):
+						return 8
+					elif(q=="B"):
+						return 7
+					elif(q=="C"):
+						return 6
+					elif(q=="D"):
+						return 5
+					elif(q=="F"):
+						return 0
+
+				def percentage(p):
+					a=0
+					for i in p:
+						a=a+grade(i[0])*int(i[1])
+					return a
+				def total(p):
+					a=0
+					f=0
+					for i in p:
+						if(i[0]=='F'):
+							f=f+1
+						else:
+							a=a+int(i[1])
+					return (a+3*f,f)
+				t=total(p)
+				sgpa = round(percentage(p)/t[0],2)
+				percentage = round(((percentage(p)/t[0])-0.7)*10,2)
+				driver.close()
+
+				context = {
+		        "sgpa": sgpa,
+		        "percentage":percentage,
+		        "username":username,
+		        "f":"you have"+ " "+str(t[1])+" " +"backlogs",
+		    	}
 
 
 			return render(request, 'results.html',context)
